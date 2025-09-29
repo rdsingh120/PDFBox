@@ -2,12 +2,13 @@ import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
 
+import org.apache.pdfbox.Loader;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 
 public class PDFBox {
 	public static void main(String[] args) throws IOException {
-		//createPDF();
+		loadPDF();
 	}
 	
 	public static void createPDF() throws IOException {
@@ -31,6 +32,22 @@ public class PDFBox {
 		
 		if(Desktop.isDesktopSupported()) Desktop.getDesktop().open(pdfFile); //opens pdf file after creation
 	}
+	
+	public static void loadPDF() throws IOException {
+		File original = new File("C:/PDFBoxTest/sample.pdf");
+		File updated = new File("C:/PDFBoxTest/sample_updated.pdf");
+		
+		PDDocument document = Loader.loadPDF(original); //loads original pdf file
+		document.addPage(new PDPage()); //add new page
+		
+		document.save(updated); //save in a new pdf file
+		
+		document.close();
+		
+		if(Desktop.isDesktopSupported()) Desktop.getDesktop().open(updated);
+	}
+	
+	
 }
 
 
