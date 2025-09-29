@@ -10,7 +10,7 @@ import org.apache.pdfbox.pdmodel.PDPage;
 
 public class PDFBox {
 	public static void main(String[] args) throws IOException {
-		splitPDF();
+		splitPDFRange();
 	}
 	
 	public static void createPDF() throws IOException {
@@ -49,24 +49,49 @@ public class PDFBox {
 		if(Desktop.isDesktopSupported()) Desktop.getDesktop().open(updated);
 	}
 	
+	//splits all pages to separate pdfs
 	public static void splitPDF() throws IOException {
 		File original = new File("C:/PDFBoxTest/sample.pdf");
 		PDDocument document = Loader.loadPDF(original); //load pdf for splitting
-		Splitter splitter = new Splitter();
 		
-		List<PDDocument> pages = splitter.split(document); //List of pages(after splitting)
+		Splitter splitter = new Splitter();
+		List<PDDocument> docs = splitter.split(document); //List of docs (after splitting)
 		
 		int i = 1;
-		for (PDDocument page : pages) {
+		for (PDDocument doc : docs) {
 			String filePath = "C:/PDFBoxTest/page" + (i++) + ".pdf";
 			File pdfFile = new File(filePath);
-			page.save(pdfFile);
-			page.close();
+			doc.save(pdfFile);
+			doc.close();
 		}
 		document.close();
 		
 	}
 	
+	//split range of pages to separate pdfs (5-10)
+	public static void splitPDFRange() throws IOException {
+		File original = new File("C:/PDFBoxTest/sample.pdf");
+		PDDocument document = Loader.loadPDF(original); //load pdf for splitting
+		
+		Splitter splitter = new Splitter();
+		
+		//Range is 50-58
+		splitter.setStartPage(50);
+		splitter.setEndPage(58);
+		
+		List<PDDocument> docs = splitter.split(document); //List of docs (after splitting)
+		
+		PDDocument newDocument = new PDDocument();
+		
+		for (PDDocument doc : docs) {
+			newDocument.importPage(doc.getPage(0)); //import each page to newDocument
+			doc.close();
+		}
+		
+		newDocument.save("C:/PDFBoxTest/sample_split.pdf");
+		newDocument.close();
+		System.out.println("Successful");
+	}	
 	
 }
 
