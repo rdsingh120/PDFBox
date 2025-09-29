@@ -1,14 +1,16 @@
 import java.awt.Desktop;
 import java.io.File;
 import java.io.IOException;
+import java.util.List;
 
 import org.apache.pdfbox.Loader;
+import org.apache.pdfbox.multipdf.Splitter;
 import org.apache.pdfbox.pdmodel.PDDocument;
 import org.apache.pdfbox.pdmodel.PDPage;
 
 public class PDFBox {
 	public static void main(String[] args) throws IOException {
-		loadPDF();
+		splitPDF();
 	}
 	
 	public static void createPDF() throws IOException {
@@ -45,6 +47,24 @@ public class PDFBox {
 		document.close();
 		
 		if(Desktop.isDesktopSupported()) Desktop.getDesktop().open(updated);
+	}
+	
+	public static void splitPDF() throws IOException {
+		File original = new File("C:/PDFBoxTest/sample.pdf");
+		PDDocument document = Loader.loadPDF(original); //load pdf for splitting
+		Splitter splitter = new Splitter();
+		
+		List<PDDocument> pages = splitter.split(document); //List of pages(after splitting)
+		
+		int i = 1;
+		for (PDDocument page : pages) {
+			String filePath = "C:/PDFBoxTest/page" + (i++) + ".pdf";
+			File pdfFile = new File(filePath);
+			page.save(pdfFile);
+			page.close();
+		}
+		document.close();
+		
 	}
 	
 	
